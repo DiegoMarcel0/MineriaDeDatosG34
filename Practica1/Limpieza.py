@@ -17,27 +17,6 @@ def validar_tipos(ruta_csv, tipos_esperados):
             print(f"X {columna}: {tipo_real} (se esperaba {tipo_esperado})")
 
     return
-#Revisa que la columna de años tenga solo valores válidos dentro de un rango.
-def validar_columna_anio(ruta_csv, columna, anio_min=1900, anio_max=2100):
-    #Cargar dataset
-    df = pd.read_csv(ruta_csv)
-
-    if columna not in df.columns:
-        print(f"La columna '{columna}' no existe en el dataset.")
-        return None
-
-    #Detectar valores inválidos
-    valores_invalidos = df[~df[columna].between(anio_min, anio_max, inclusive="both")]
-
-    print(f"\n--- Validación de la columna '{columna}' ---")
-    if valores_invalidos.empty:
-        print(f"-> Todos los valores están entre {anio_min} y {anio_max}.")
-    else:
-        print(f"X Se encontraron valores fuera de rango en '{columna}':")
-        print(valores_invalidos[[columna]])
-
-    return 
-
 
 
 tipos = {
@@ -54,9 +33,9 @@ tipos = {
     "Global_Sales": "float64"
 }
 
-#Verificar tipo de cada columna
+#Verificar tipo de cada columna por que son muchos, para que no se cuele un dato raro
 validar_tipos("vgsales%20(1).csv", tipos)
-"""
+""" SALIDA:
 --- Revisión de tipos de datos ---
 -> Rank: int64 (correcto)
 -> Name: object (correcto)
@@ -75,7 +54,15 @@ X Year: float64 (se esperaba int64)
 #La unica expeción inesperada fue el año, que dio float64
 
 # Comprobar lo de la columna Year
-validar_columna_anio("vgsales%20(1).csv", columna="Year", anio_min=1900, anio_max=2100)
+df = pd.read_csv("vgsales%20(1).csv")
+valores_invalidos = df[~df["Year"].between(1900, 2100, inclusive="both")]
+print(f"\n--- Validación de la columna Year ---")
+if valores_invalidos.empty:
+    print(f"-> Todos los valores están entre 1900 y 2100.")
+else:
+    print(f"X Se encontraron valores fuera de rango :")
+    print(valores_invalidos[["Year"]])
+
 """
 --- Validación de la columna 'Year' ---
 X Se encontraron valores fuera de rango en 'Year':
@@ -97,40 +84,39 @@ X Se encontraron valores fuera de rango en 'Year':
 #CONCLUSIONES
 #Se encontro que varias filas tienen NaN, por eso se reconocio como float64
 
-#Se reemplazara con la moda de de la columna 'Year' porque
-#las filas no tienen secuencia
+#Por situaciones similares en los videos de la clase, se opto por:
+#   Dejar el .cvs tal cual, pero en calculos donde se incluya "Year" eliminar los NaN
+
+#Ejemplo de convertir y limpiar NaN
 df = pd.read_csv("vgsales%20(1).csv")
-moda = df["Year"].mode()[0]
-print(f"-> Moda: {moda}")
-#Remplazar NA con moda
-df["Year"] = df["Year"].fillna(moda)
-#Corregir que sean considerado float64
+df = df.dropna(subset=["Year"])
 df["Year"] = df["Year"].astype("int64")
-df.to_csv("vgsales_NoNA.csv", index=False)
-print("Finalizado")
+#df.to_csv("vgsales_NoNA.csv", index=False)
+print("\n--- Finalizado---\n\n")
 """
--> Moda: 2009.0
-Finalizado
+--- Finalizado---
 
 """
 #Comprobacion
-validar_tipos("vgsales_NoNA.csv", tipos)
-validar_columna_anio("vgsales_NoNA.csv", columna="Year", anio_min=1900, anio_max=2100)
-"""
---- Revisión de tipos de datos ---
--> Rank: int64 (correcto)
--> Name: object (correcto)
--> Platform: object (correcto)
--> Year: int64 (correcto)
--> Genre: object (correcto)
--> Publisher: object (correcto)
--> NA_Sales: float64 (correcto)
--> EU_Sales: float64 (correcto)
--> JP_Sales: float64 (correcto)
--> Other_Sales: float64 (correcto)
--> Global_Sales: float64 (correcto)
+#TIPO
+print(f"\n--- Validación de la columna Year ---")
+tipo_real = str(df["Year"].dtype)
 
---- Validación de la columna 'Year' ---
+if tipo_real == "int64":
+    print("-> 'Year': int64 (correcto)")
+else:
+    print(f"X 'Year': {tipo_real} (se esperaba int64)")
+
+#Sin algún NaN
+valores_invalidos = df[~df["Year"].between(1900, 2100, inclusive="both")]
+if valores_invalidos.empty:
+    print(f"-> Todos los valores están entre 1900 y 2100.")
+else:
+    print(f"X Se encontraron valores fuera de rango :")
+    print(valores_invalidos[["Year"]])
+"""
+--- Validación de la columna Year ---
+-> 'Year': int64 (correcto)
 -> Todos los valores están entre 1900 y 2100.
 """
 #Todo OK
