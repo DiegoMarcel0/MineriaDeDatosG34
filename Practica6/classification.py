@@ -38,6 +38,7 @@ Salida: Serie (convertida a int)
         Diccionario del valor (int) y su color (string) 
 """
 def classification_KNN(df, x_column1, x_column2, y_column, k):
+    #NOTA:dos datos para una grafica más intuitiva
     X = df[[x_column1, x_column2]]
     y, c = estandarizacion(df, y_column)
     # Dividir en entrenamiento y prueba
@@ -77,28 +78,30 @@ def classification_KNN(df, x_column1, x_column2, y_column, k):
 
 # Cargar dataset
 df = pd.read_csv("../vgsales%20(1).csv")
-#classification_KNN(df, "EU_Sales", "NA_Sales", "Genre", 4)
+classification_KNN(df, "EU_Sales", "NA_Sales", "Genre", 4)
 
 onePlattform = df[df["Platform"]=="Wii"]
 #print(onePlattform["Year"])
-#classification_KNN(onePlattform, "EU_Sales", "NA_Sales", "Genre", 5)
+classification_KNN(onePlattform, "EU_Sales", "NA_Sales", "Genre", 5)
 
 oneYear = df[df["Year"]==2008]
 #print(oneYear)
-#classification_KNN(oneYear, "EU_Sales", "NA_Sales", "Genre", 3)
+classification_KNN(oneYear, "EU_Sales", "NA_Sales", "Genre", 3)
 
 """
 Todos los resultados son desde confusos a intelegibles, además no parece predecir el
 comportamiento de los datos, esto basandome en la función y la intuición al ver el grafico
+score de 0 a 0.2 aprox
 
 """
 df_resumen = df.groupby("Genre")[["EU_Sales", "NA_Sales"]].agg(["mean", "sum"])
 df_resumen.columns = ['_'.join(col) for col in df_resumen.columns]
 df_resumen = df_resumen.reset_index()
 #print (df_resumen.head(5))
-#classification_KNN(df_resumen, "EU_Sales_mean", "NA_Sales_mean", "Genre", 3)
+classification_KNN(df_resumen, "EU_Sales_mean", "NA_Sales_mean", "Genre", 3)
 """
 Ya no es confuso ni intelegible, se puede ver claramente como es que no predice nada
+score de 0.0
 NOTA: El ejemplo viene de esta parte
 """
 
@@ -110,6 +113,7 @@ classification_KNN(df_resumen, "EU_Sales_sum", "NA_Sales_sum", "Genre", 3)
 
 """
 Resultados similares a los primeros acercamientos, confusos y no muy prometedores
+score de 0 a 0.2 aprox
 
 Conclusiones
 Los datos siguen una tendencia lineal positiva, conveniente para una regresión lineal pero
