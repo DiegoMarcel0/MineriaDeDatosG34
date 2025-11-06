@@ -34,8 +34,6 @@ Entrada: Un dataframe base
         string de la columna de caracteristicas 2
         string de la columna con las clases
         numero de vecinos para el modelo de k vecinos
-Salida: Serie (convertida a int)
-        Diccionario del valor (int) y su color (string) 
 """
 def classification_KNN(df, x_column1, x_column2, y_column, k):
     #NOTA:dos datos para una grafica más intuitiva
