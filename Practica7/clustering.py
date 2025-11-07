@@ -29,18 +29,19 @@ plt.title('Método del codo')
 plt.show()
 
 """
-Se encontro de que 6 es el numero de clusteres con el que se deja de ser significativo
+Se encontro de que 5 es el numero de clusteres con el que se deja de ser significativo
 el la disminución de distancia a los centroides, esto solo de forma intuitiva.
 """
 #  Crear el modelo de clustering
 kmeans = KMeans(n_clusters=5, random_state=0)
 df['Cluster'] = kmeans.fit_predict(scaled)
 
+# *** Graficar con colores automáticos ***
+# Asignar colores
 num_clusters = len(df['Cluster'].unique())
 colormap = cm.get_cmap('viridis', num_clusters)
 colors = [colormap(i) for i in range(num_clusters)]
-
-# Graficar con colores automáticos
+#Dividir y mostrar
 plt.figure(figsize=(7,5))
 for i in range(num_clusters):
     subset = df[df['Cluster'] == i]
@@ -61,7 +62,7 @@ Por ejemplo se puede clasificar como (según en la grafica):
 Cluster 0: De exito minimo
 Cluster 1: Gran exito en Japón
 Cluster 2: Exito en Norte America
-Cluster 3: Super gran exitaso en 
+Cluster 3: Exito General (Mayoritariamente en Japón)
 Cluster 4: Exito en Japón
 
 
