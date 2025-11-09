@@ -67,36 +67,27 @@ def regresion_linearS(df, x_column, y_column):
     print(f"R² del modelo: {r2:.4f}")
     x = X.values
 
-    """  # 6. Calcular coeficiente de confianza
-    x_pred = np.linspace(x.min(), x.max(), 200)
-    y_pred = modelo.predict(x_pred.reshape(-1, 1))
-    y_hat = modelo.predict(x.reshape(-1, 1))
-    residuos = y - y_hat
-    s_err = np.sqrt(np.sum(residuos**2) / (len(x) - 2))
-    t = stats.t.ppf(0.975, len(x)-2)  # valor t para 80%
-    conf = t * s_err * np.sqrt(1/len(x) + (x_pred - np.mean(x))**2 / np.sum((x - np.mean(x))**2)) """
+    # 6. Calcular area del intervalo de confianza
+    predicciones_, low_bar_, high_bar_ = intervalo_confianza(modelo, y.values ,x , x)
+
     #7. Preddicciones
     ultimo_anio = df[x_column].max()
     anios_futuros = np.arange(ultimo_anio + 1, ultimo_anio + 11).reshape(-1, 1)
-    #predicciones = modelo.predict(anios_futuros)
-    
     predicciones, low_bar, high_bar = intervalo_confianza(modelo,y.values ,x , anios_futuros)
 
-    predicciones_, low_bar_, high_bar_ = intervalo_confianza(modelo, y.values ,x , x)
-    print (x)
-
     #8. Mostrar datos, recta y el area de intervalo
-    plt.scatter(X, y, label="Datos")
-    plt.plot(X, modelo.predict(X), color='red', label="Recta de regresión")
-    #plt.fill_between(x_pred, y_pred - conf, y_pred + conf, color='red', alpha=0.2, label='Intervalo 95%')
-    plt.fill_between(x.flatten(), low_bar_ , high_bar_, color='red', alpha=0.2, label='Prueba')
-    plt.fill_between(anios_futuros.flatten(), low_bar.flatten(), high_bar.flatten(),
+    plt.scatter(X, y, label="Datos")#DATOS
+
+    plt.plot(X, modelo.predict(X), color='red', label="Recta de regresión")#REGRESION
+    plt.fill_between(x.flatten(), low_bar_ , high_bar_, color='red', alpha=0.2, label='Intervalo 95%')
+
+    plt.fill_between(anios_futuros.flatten(), low_bar.flatten(), high_bar.flatten(),#PREDICCION
                     color='green', alpha=0.2, label='Intervalo 95%')
-    #
     plt.plot(anios_futuros, predicciones, color='green', linestyle='--', label='Predicción 10 años')
+
     plt.xlabel(f"{x_column}")
     plt.ylabel(f"{y_column}")
-    plt.title(f"Regresión Linear simple\nR² del modelo: {r2:.4f} ")
+    plt.title(f"Regresión Linear simple + Predicciòn\nR² del modelo: {r2:.4f} ")
     plt.legend()
     plt.show()
     return 
@@ -109,10 +100,6 @@ def graficare(df, region):
 
 df = pd.read_csv("../vgsales%20(1).csv")
 df = df.dropna(subset=["Year"]) #Eliminar valores NA
-#TEST#2
+
 graficare(df, "EU_Sales")
-#TEST#3
-#graficare(df, "Global_Sales")
-#TEST#4
-#graficare(df, "JP_Sales")
 
